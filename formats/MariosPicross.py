@@ -62,6 +62,7 @@ class MariosPicross(yapsy.IPlugin.IPlugin):
             ("width",  "B"),
             ("height", "B"),
         ],
+        # This turns the 16-bit integers into bitfields (1 -> True, 0 -> False)
         massage_in = {
             "row1"  : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
             "row2"  : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
@@ -80,6 +81,7 @@ class MariosPicross(yapsy.IPlugin.IPlugin):
             "row15" : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
         },
         massage_out = {
+        # This turns the bitfields into 16-bit integers (True -> 1, False -> 0)
             "row1"  : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
             "row2"  : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
             "row3"  : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
@@ -108,13 +110,41 @@ class MariosPicross(yapsy.IPlugin.IPlugin):
     def read_puzzles_from_rom(data):
         """Return all levels stored in the ROM given by data."""
         from io import BytesIO
-        puzzle_chunk = BytesIO(data[0x92b0:0xa2b0])
+        # Thanks to Killa B for writing these addresses down.
+        PUZZLES_BEGIN = 0x92b0
+        PUZZLES_END   = 0xa2b0
+        puzzle_chunk = BytesIO(data[PUZZLES_BEGIN:PUZZLES_END])
         return MariosPicross.read_puzzles(puzzle_chunk)
 
     @staticmethod
     def read_puzzles(data):
-        """Return all levels stored in data.
+        """Return a list of all levels stored in data.
 
+        The format for an individual puzzle that looks like this
+
+            XXXXX
+            OOXOO
+            OOXOO
+            OOXOO
+
+        Will be
+
+        { "row1" : [True,  True,  True,  True,  True]  + [False]*11,
+          "row2" : [False, False, True,  False, False] + [False]*11,
+          "row3" : [False, False, True,  False, False] + [False]*11,
+          "row4" : [False, False, True,  False, False] + [False]*11,
+          "row5" : [False, False, True,  False, False] + [False]*11,
+          "row6" : [False]*16,
+          . . . rows 7-14 look the same . . .
+          "row15"  : [False]*16,
+          "width"  : 5,
+          "height" : 5,
+        }
+
+        Notice that every puzzle will contain 15 rows of 15 columns each, and
+        its actual size is specified by the 'width' and 'height' entries in the
+        dict.
+        
         """
         puzzles = []
         for puzzle in iter(lambda: data.read(MariosPicross.puzzle_reader.struct.size), b""):
