@@ -28,6 +28,12 @@ from utilities import File, FileReader
 class MariosPicross(yapsy.IPlugin.IPlugin):
     """Parses Mario's Picross data."""
 
+    # I was able to put this together easily thanks to a document by Killa B
+    # describing the layout of these levels and where they're located in the
+    # ROM. You can find it at:
+    #
+    # http://www.zophar.net/fileuploads/3/21546xutra/picrossleveldata.txt
+
     key = "marios_picross_a"
     title = "Mario's Picross"
     developer = "Jupiter Corp."
@@ -37,11 +43,11 @@ class MariosPicross(yapsy.IPlugin.IPlugin):
         File("mariop.gb", 262144, "ccaf9331318d4dfe3d1ee681928a74fd"), # US
     ]
 
-    # I was able to put this together easily thanks to a document by Killa B
-    # describing the layout of these levels and where they're located in the
-    # ROM. You can find it at:
-    #
-    # http://www.zophar.net/fileuploads/3/21546xutra/picrossleveldata.txt
+    # 1 -> True, 0 -> False
+    int_to_bitfield = lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]
+    # True -> 1, False -> 0
+    bitfield_to_int = lambda r: sum([2 ** n for n in range(16) if r[15-n]])
+
     puzzle_reader = FileReader(
         format = [
             ("row1",   "H"),
@@ -62,41 +68,39 @@ class MariosPicross(yapsy.IPlugin.IPlugin):
             ("width",  "B"),
             ("height", "B"),
         ],
-        # This turns the 16-bit integers into bitfields (1 -> True, 0 -> False)
         massage_in = {
-            "row1"  : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row2"  : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row3"  : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row4"  : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row5"  : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row6"  : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row7"  : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row8"  : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row9"  : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row10" : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row11" : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row12" : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row13" : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row14" : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
-            "row15" : (lambda r: [bool((r >> (15 - n) & 1)) for n in range(16)]),
+            "row1"  : int_to_bitfield,
+            "row2"  : int_to_bitfield,
+            "row3"  : int_to_bitfield,
+            "row4"  : int_to_bitfield,
+            "row5"  : int_to_bitfield,
+            "row6"  : int_to_bitfield,
+            "row7"  : int_to_bitfield,
+            "row8"  : int_to_bitfield,
+            "row9"  : int_to_bitfield,
+            "row10" : int_to_bitfield,
+            "row11" : int_to_bitfield,
+            "row12" : int_to_bitfield,
+            "row13" : int_to_bitfield,
+            "row14" : int_to_bitfield,
+            "row15" : int_to_bitfield,
         },
         massage_out = {
-        # This turns the bitfields into 16-bit integers (True -> 1, False -> 0)
-            "row1"  : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row2"  : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row3"  : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row4"  : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row5"  : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row6"  : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row7"  : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row8"  : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row9"  : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row10" : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row11" : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row12" : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row13" : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row14" : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
-            "row15" : (lambda r: sum([2 ** n for n in range(16) if r[15-n]])),
+            "row1"  : bitfield_to_int,
+            "row2"  : bitfield_to_int,
+            "row3"  : bitfield_to_int,
+            "row4"  : bitfield_to_int,
+            "row5"  : bitfield_to_int,
+            "row6"  : bitfield_to_int,
+            "row7"  : bitfield_to_int,
+            "row8"  : bitfield_to_int,
+            "row9"  : bitfield_to_int,
+            "row10" : bitfield_to_int,
+            "row11" : bitfield_to_int,
+            "row12" : bitfield_to_int,
+            "row13" : bitfield_to_int,
+            "row14" : bitfield_to_int,
+            "row15" : bitfield_to_int,
         },
         byte_order = ">",
     )
@@ -144,7 +148,7 @@ class MariosPicross(yapsy.IPlugin.IPlugin):
         Notice that every puzzle will contain 15 rows of 15 columns each, and
         its actual size is specified by the 'width' and 'height' entries in the
         dict.
-        
+
         """
         puzzles = []
         for puzzle in iter(lambda: data.read(MariosPicross.puzzle_reader.struct.size), b""):
