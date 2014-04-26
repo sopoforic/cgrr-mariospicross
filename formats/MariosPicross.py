@@ -116,7 +116,7 @@ class MariosPicross(yapsy.IPlugin.IPlugin):
         from io import BytesIO
         # Thanks to Killa B for writing these addresses down.
         PUZZLES_BEGIN = 0x92b0
-        PUZZLES_END   = 0xa2b0
+        PUZZLES_END   = 0xb2d0
         puzzle_chunk = BytesIO(data[PUZZLES_BEGIN:PUZZLES_END])
         return MariosPicross.read_puzzles(puzzle_chunk)
 
@@ -209,10 +209,9 @@ class MariosPicross(yapsy.IPlugin.IPlugin):
     @staticmethod
     def insert_puzzles(rom, puzzles):
         """Insert puzzles into rom."""
-        # At most 127 puzzles--we don't want to replace the tutorial puzzle. I
-        # don't know what would happen.
-        if len(puzzles) > 127:
-            raise ValueError("Cannot insert more than 127 puzzles!")
+        # At most 256 puzzles--we don't want to replace the tutorial puzzle.
+        if len(puzzles) > 256:
+            raise ValueError("Cannot insert more than 256 puzzles!")
         
         puzzledata = MariosPicross.write_puzzles(puzzles)
         
