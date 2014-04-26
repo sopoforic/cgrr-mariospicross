@@ -133,16 +133,18 @@ class MariosPicross(yapsy.IPlugin.IPlugin):
 
         Will be
 
-        { "row1" : [True,  True,  True,  True,  True]  + [False]*11,
-          "row2" : [False, False, True,  False, False] + [False]*11,
-          "row3" : [False, False, True,  False, False] + [False]*11,
-          "row4" : [False, False, True,  False, False] + [False]*11,
-          "row5" : [False, False, True,  False, False] + [False]*11,
-          "row6" : [False]*16,
-          . . . rows 7-14 look the same . . .
-          "row15"  : [False]*16,
-          "width"  : 5,
-          "height" : 5,
+        { 'width'  : 5,
+          'height' : 5,
+          'puzzle' : [
+            [True,  True,  True,  True,  True]  + [False]*11,
+            [False, False, True,  False, False] + [False]*11,
+            [False, False, True,  False, False] + [False]*11,
+            [False, False, True,  False, False] + [False]*11,
+            [False, False, True,  False, False] + [False]*11,
+            [False]*16,
+                  . . . rows 7-14 look the same . . .
+            [False]*16,
+          ]
         }
 
         Notice that every puzzle will contain 15 rows of 15 columns each, and
@@ -152,5 +154,70 @@ class MariosPicross(yapsy.IPlugin.IPlugin):
         """
         puzzles = []
         for puzzle in iter(lambda: data.read(MariosPicross.puzzle_reader.struct.size), b""):
-            puzzles.append(MariosPicross.puzzle_reader.unpack(puzzle))
+            puzzle = MariosPicross.puzzle_reader.unpack(puzzle)
+            puzzle = {
+                "width"  : puzzle["width"],
+                "height" : puzzle["height"],
+                "puzzle" : [
+                    puzzle["row1"],
+                    puzzle["row2"],
+                    puzzle["row3"],
+                    puzzle["row4"],
+                    puzzle["row5"],
+                    puzzle["row6"],
+                    puzzle["row7"],
+                    puzzle["row8"],
+                    puzzle["row9"],
+                    puzzle["row10"],
+                    puzzle["row11"],
+                    puzzle["row12"],
+                    puzzle["row13"],
+                    puzzle["row14"],
+                    puzzle["row15"],
+                ]
+            }
+            puzzles.append(puzzle)
         return puzzles
+
+    @staticmethod
+    def write_puzzles(puzzles):
+        """Return a bytestring representing the puzzles."""
+        data = b''
+        for puzzle in puzzles:
+            puzzle = {
+                'width'  : puzzle['width'],
+                'height' : puzzle['height'],
+                'row1'   : puzzle['puzzle'][0],
+                'row2'   : puzzle['puzzle'][1],
+                'row3'   : puzzle['puzzle'][2],
+                'row4'   : puzzle['puzzle'][3],
+                'row5'   : puzzle['puzzle'][4],
+                'row6'   : puzzle['puzzle'][5],
+                'row7'   : puzzle['puzzle'][6],
+                'row8'   : puzzle['puzzle'][7],
+                'row9'   : puzzle['puzzle'][8],
+                'row10'  : puzzle['puzzle'][9],
+                'row11'  : puzzle['puzzle'][10],
+                'row12'  : puzzle['puzzle'][11],
+                'row13'  : puzzle['puzzle'][12],
+                'row14'  : puzzle['puzzle'][13],
+                'row15'  : puzzle['puzzle'][14],
+            }
+            data += MariosPicross.puzzle_reader.pack(puzzle)
+        return data
+
+    @staticmethod
+    def insert_puzzles(rom, puzzles):
+        """Insert puzzles into rom."""
+        # At most 127 puzzles--we don't want to replace the tutorial puzzle. I
+        # don't know what would happen.
+        if len(puzzles) > 127:
+            raise ValueError("Cannot insert more than 127 puzzles!")
+        
+        puzzledata = MariosPicross.write_puzzles(puzzles)
+        
+        # seek to the beginning of the 2nd puzzle
+        rom.seek(0x92d0)
+        rom.write(puzzledata)
+
+        return rom

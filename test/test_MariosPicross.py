@@ -28,7 +28,8 @@ class Test_marios_picross_a:
         manager.setPluginPlaces(["formats"])
         manager.collectPlugins()
         self.plugin = manager.getPluginByName("Mario's Picross").plugin_object
-        # This mock data is a copy of a real score file
+        # This is a set of four puzzles that read 'T', 'E', 'S', 'T' in several
+        # sizes.
         mock = (b'\xf8\x00 \x00 \x00 \x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00'
                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x05\xff'
                 b'\xc0\xc0\x00\xc0\x00\xc0\x00\xff\xc0\xc0\x00\xc0\x00\xc0\x00'
@@ -45,77 +46,97 @@ class Test_marios_picross_a:
         self.puzzlesdata = None
 
     def test_read_puzzles(self):
+        """Verify that read_puzzles correctly decodes known input."""
         X = True
         O = False
         correct = [
- {'height': 5,
-  'row1':  [X, X, X, X, X, O, O, O, O, O, O, O, O, O, O, O],
-  'row2':  [O, O, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row3':  [O, O, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row4':  [O, O, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row5':  [O, O, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row6':  [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row7':  [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row8':  [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row9':  [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row10': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row11': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row12': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row13': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row14': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row15': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'width': 5},
- {'height': 10,
-  'row1':  [X, X, X, X, X, X, X, X, X, X, O, O, O, O, O, O],
-  'row2':  [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row3':  [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row4':  [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row5':  [X, X, X, X, X, X, X, X, X, X, O, O, O, O, O, O],
-  'row6':  [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row7':  [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row8':  [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row9':  [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row10': [X, X, X, X, X, X, X, X, X, X, O, O, O, O, O, O],
-  'row11': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row12': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row13': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row14': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row15': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'width': 10},
- {'height': 15,
-  'row1':  [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, O],
-  'row2':  [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, O],
-  'row3':  [X, X, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row4':  [X, X, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row5':  [X, X, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row6':  [X, X, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row7':  [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, O],
-  'row8':  [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, O],
-  'row9':  [O, O, O, O, O, O, O, O, O, O, O, O, X, X, X, O],
-  'row10': [O, O, O, O, O, O, O, O, O, O, O, O, X, X, X, O],
-  'row11': [O, O, O, O, O, O, O, O, O, O, O, O, X, X, X, O],
-  'row12': [O, O, O, O, O, O, O, O, O, O, O, O, X, X, X, O],
-  'row13': [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, O],
-  'row14': [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, O],
-  'row15': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'width': 15},
- {'height': 10,
-  'row1':  [X, X, X, X, X, X, X, X, X, X, O, O, O, O, O, O],
-  'row2':  [X, X, X, X, X, X, X, X, X, X, O, O, O, O, O, O],
-  'row3':  [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
-  'row4':  [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
-  'row5':  [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
-  'row6':  [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
-  'row7':  [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
-  'row8':  [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
-  'row9':  [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
-  'row10': [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
-  'row11': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row12': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row13': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row14': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'row15': [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
-  'width': 10}
+            {'height' : 5,
+             'width'  : 5,
+             'puzzle' : [
+               [X, X, X, X, X, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+             ]
+            },
+            {'height' : 10,
+             'width'  : 10,
+             'puzzle' : [
+               [X, X, X, X, X, X, X, X, X, X, O, O, O, O, O, O],
+               [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [X, X, X, X, X, X, X, X, X, X, O, O, O, O, O, O],
+               [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [X, X, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [X, X, X, X, X, X, X, X, X, X, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+             ],
+            },
+            {'height' : 15,
+             'width'  : 15,
+             'puzzle' : [
+               [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, O],
+               [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, O],
+               [X, X, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [X, X, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [X, X, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [X, X, X, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, O],
+               [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, X, X, X, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, X, X, X, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, X, X, X, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, X, X, X, O],
+               [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, O],
+               [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+             ]
+            },
+            {'height' : 10,
+             'width'  : 10,
+             'puzzle' : [
+               [X, X, X, X, X, X, X, X, X, X, O, O, O, O, O, O],
+               [X, X, X, X, X, X, X, X, X, X, O, O, O, O, O, O],
+               [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, X, X, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+               [O, O, O, O, O, O, O, O, O, O, O, O, O, O, O, O],
+             ]
+            }
         ]
 
         assert self.plugin.read_puzzles(self.puzzlesdata) == correct
+
+    def test_write_puzzles(self):
+        """Test roundtripping with write_puzzles."""
+
+        puzzles = self.plugin.read_puzzles(self.puzzlesdata)
+
+        assert self.plugin.write_puzzles(puzzles) == self.puzzlesdata.getvalue()
