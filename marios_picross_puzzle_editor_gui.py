@@ -61,16 +61,25 @@ class MainWindow(Frame):
         self.parent.grid_columnconfigure(0, weight=1)
         self.parent.grid_columnconfigure(4, weight=1)
 
-        prevButton = Button(self.parent, text="<--", command=self.onPrev)
+        prevButton = Button(self.parent,
+                            text="<--",
+                            command=self.onPrev,
+                            state=DISABLED
+        )
         self.prevButton = prevButton
         prevButton.grid(row=0, column=1)
 
         puzzle_number = 1
         self.puzzle_number = puzzle_number
         puzzleNumber = Label(self.parent, text="Puzzle #{}".format(puzzle_number))
+        self.puzzleNumber = puzzleNumber
         puzzleNumber.grid(row=0, column=2)
 
-        nextButton = Button(self.parent, text="-->", command=self.onNext)
+        nextButton = Button(self.parent,
+                            text="-->",
+                            command=self.onNext,
+                            state=DISABLED
+        )
         self.nextButton = nextButton
         nextButton.grid(row=0, column=3)
 
@@ -96,6 +105,8 @@ class MainWindow(Frame):
         self.puzzles = self.plugin.read_puzzles_from_rom(self.rom)
         self.fileMenu.entryconfig(1, state=DISABLED)
         self.fileMenu.entryconfig(2, state=NORMAL)
+        self.nextButton['state'] = NORMAL
+        self.prevButton['state'] = NORMAL
         self.draw_puzzle()
 
     def onSave(self):
@@ -119,6 +130,7 @@ class MainWindow(Frame):
             self.puzzle_number = 256
         else:
             self.puzzle_number -= 1
+        self.puzzleNumber['text'] = "Puzzle #{}".format(self.puzzle_number)
         self.draw_puzzle()
 
     def onNext(self):
@@ -126,6 +138,7 @@ class MainWindow(Frame):
             self.puzzle_number = 1
         else:
             self.puzzle_number += 1
+        self.puzzleNumber['text'] = "Puzzle #{}".format(self.puzzle_number)
         self.draw_puzzle()
 
     def onClick(self, event):
@@ -168,6 +181,7 @@ def main():
     
     root = Tk()
     root.geometry("320x350+300+300")
+    root.resizable(0,0)
     app = MainWindow(root)
     root.mainloop()
 
