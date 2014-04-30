@@ -20,7 +20,7 @@ import logging
 import struct
 import os
 
-import yapsy
+import yapsy.IPlugin
 
 import utilities
 from utilities import File, FileReader
