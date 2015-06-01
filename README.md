@@ -8,8 +8,10 @@ Usage
 =====
 
 `marios_picross_puzzle_editor_gui.py` provides a simple GUI for editing a
-_Mario's Picross_ ROM to modify the puzzles. Under the hood, it uses
-`mariospicross.py`.
+_Mario's Picross_ ROM to modify the puzzles. A Windows binary is available
+[here][1].
+
+Under the hood, the GUI uses `mariospicross.py`.
 
 To parse a ROM for puzzles, use `read_puzzles_from_rom`:
 
@@ -50,3 +52,5 @@ details.
 
 [![Build Status](https://travis-ci.org/sopoforic/cgrr-mariospicross.svg?branch=master)](https://travis-ci.org/sopoforic/cgrr-mariospicross)
 [![Code Health](https://landscape.io/github/sopoforic/cgrr-mariospicross/master/landscape.svg?style=flat)](https://landscape.io/github/sopoforic/cgrr-mariospicross/master)
+
+[1]: https://github.com/sopoforic/cgrr-mariospicross/releases/download/v0.1.0/marios_picross_puzzle_editor_gui-ab8c7b1.7z
