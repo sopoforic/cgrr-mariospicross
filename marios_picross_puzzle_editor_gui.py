@@ -19,7 +19,8 @@
 import logging
 import io
 
-from tkinter import *
+from tkinter import (Tk, Frame, Canvas, Menu, Label, Button,
+                     DISABLED, NORMAL, W, E, N, S)
 from tkinter.filedialog import askopenfilename, asksaveasfile
 
 import MariosPicross
