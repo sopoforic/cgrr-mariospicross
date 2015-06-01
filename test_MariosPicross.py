@@ -21,13 +21,9 @@ class Test_marios_picross_a:
 
     def setup(self):
         import io
-        
-        from yapsy.PluginManager import PluginManager
+        import MariosPicross
 
-        manager = PluginManager()
-        manager.setPluginPlaces(["formats"])
-        manager.collectPlugins()
-        self.plugin = manager.getPluginByName("Mario's Picross").plugin_object
+        self.MariosPicross = MariosPicross
         # This is a set of four puzzles that read 'T', 'E', 'S', 'T' in several
         # sizes.
         mock = (b'\xf8\x00 \x00 \x00 \x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -42,7 +38,7 @@ class Test_marios_picross_a:
         self.puzzlesdata = io.BytesIO(mock)
 
     def teardown(self):
-        self.plugin = None
+        self.MariosPicross = None
         self.puzzlesdata = None
 
     def test_read_puzzles(self):
@@ -132,11 +128,11 @@ class Test_marios_picross_a:
             }
         ]
 
-        assert self.plugin.read_puzzles(self.puzzlesdata) == correct
+        assert self.MariosPicross.read_puzzles(self.puzzlesdata) == correct
 
     def test_write_puzzles(self):
         """Test roundtripping with write_puzzles."""
 
-        puzzles = self.plugin.read_puzzles(self.puzzlesdata)
+        puzzles = self.MariosPicross.read_puzzles(self.puzzlesdata)
 
-        assert self.plugin.write_puzzles(puzzles) == self.puzzlesdata.getvalue()
+        assert self.MariosPicross.write_puzzles(puzzles) == self.puzzlesdata.getvalue()
