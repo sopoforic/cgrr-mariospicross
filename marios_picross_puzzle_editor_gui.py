@@ -17,7 +17,6 @@
 # along with CGRR.  If not, see <http://www.gnu.org/licenses/>.
 """GUI for editing Mario's Picross levels."""
 import logging
-import io
 
 from tkinter import (Tk, Frame, Canvas, Menu, Label, Button,
                      DISABLED, NORMAL, W, E, N, S)
