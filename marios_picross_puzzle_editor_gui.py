@@ -177,7 +177,6 @@ class MainWindow(Frame):
 
 def main():
 
-
     root = Tk()
     root.geometry("320x350+300+300")
     root.resizable(0,0)
