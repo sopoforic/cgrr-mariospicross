@@ -22,10 +22,9 @@ import io
 from tkinter import *
 from tkinter.filedialog import askopenfilename, asksaveasfile
 
-from formats.MariosPicross import MariosPicross
+import MariosPicross
 
 logging.basicConfig(level=logging.DEBUG)
-logging.getLogger("yapsy").setLevel(logging.WARNING)
 
 class MainWindow(Frame):
     def __init__(self, parent):
@@ -178,7 +177,7 @@ class MainWindow(Frame):
 
 def main():
 
-    
+
     root = Tk()
     root.geometry("320x350+300+300")
     root.resizable(0,0)
