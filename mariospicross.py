@@ -1,5 +1,5 @@
 # Classic Game Resource Reader (CGRR): Parse resources from classic games.
-# Copyright (C) 2014  Tracy Poff
+# Copyright (C) 2014-2015  Tracy Poff
 #
 # This file is part of CGRR.
 #
