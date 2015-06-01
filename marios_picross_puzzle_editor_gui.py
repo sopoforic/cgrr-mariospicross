@@ -22,7 +22,7 @@ from tkinter import (Tk, Frame, Canvas, Menu, Label, Button,
                      DISABLED, NORMAL, W, E, N, S)
 from tkinter.filedialog import askopenfilename, asksaveasfile
 
-import MariosPicross
+import mariospicross
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -30,7 +30,7 @@ class MainWindow(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent, background="white")
 
-        self.plugin = MariosPicross
+        self.plugin = mariospicross
 
         self.parent = parent
 

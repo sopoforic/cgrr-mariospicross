@@ -21,9 +21,9 @@ class Test_marios_picross_a:
 
     def setup(self):
         import io
-        import MariosPicross
+        import mariospicross
 
-        self.MariosPicross = MariosPicross
+        self.mariospicross = mariospicross
         # This is a set of four puzzles that read 'T', 'E', 'S', 'T' in several
         # sizes.
         mock = (b'\xf8\x00 \x00 \x00 \x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -38,7 +38,7 @@ class Test_marios_picross_a:
         self.puzzlesdata = io.BytesIO(mock)
 
     def teardown(self):
-        self.MariosPicross = None
+        self.mariospicross = None
         self.puzzlesdata = None
 
     def test_read_puzzles(self):
@@ -128,11 +128,11 @@ class Test_marios_picross_a:
             }
         ]
 
-        assert self.MariosPicross.read_puzzles(self.puzzlesdata) == correct
+        assert self.mariospicross.read_puzzles(self.puzzlesdata) == correct
 
     def test_write_puzzles(self):
         """Test roundtripping with write_puzzles."""
 
-        puzzles = self.MariosPicross.read_puzzles(self.puzzlesdata)
+        puzzles = self.mariospicross.read_puzzles(self.puzzlesdata)
 
-        assert self.MariosPicross.write_puzzles(puzzles) == self.puzzlesdata.getvalue()
+        assert self.mariospicross.write_puzzles(puzzles) == self.puzzlesdata.getvalue()
